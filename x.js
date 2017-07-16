@@ -1,6 +1,27 @@
 const scribble = require('scribbletune')
 const { spawnSync } = require('child_process')
+const commandLineArgs = require('command-line-args')
 
+// describe the command line options
+const optionDefinitions = [
+  {
+    name : 'filename',
+    alias : 'f',
+    type : String,
+    multiple : false,
+    defaultOption : true
+  },
+  {
+    name : 'pattern',
+    alias : 'p',
+    type : String,
+    multiple : true,
+    defaultOption : false
+  }
+]
+// next, parse the options using commandLineArgs()
+const options = commandLineArgs(optionDefinitions)
+console.log('options :', options);
 
 // command line arguments for nodejs are stored in process.argv
 // console.log(process.argv);
@@ -9,23 +30,21 @@ process.argv.forEach(function(val, index, array) {
   console.log(index + ': ' + val)
 })
 
-// if (process.argv.length <= 2 ) console.log('$ node x ['filename', 'pattern']');
 
-switch (process.argv.length) {
-  case 2 :
-    // console.log('$ node x ['filename', 'pattern']');
-    console.log('ello');
-    break;
-  default:
 
-}
 /*
 simple music playing/making script
 use scribbletune and wildmidi to create then play midi files
 
 first, declare a filename
 */
-let filename = 'music.mid'
+
+let filename = ''
+options.filename ? filename = options.filename : filename = 'generic-music.mid'
+
+filename.includes('.mid') ? {/* pass */} : filename = filename + '.mid'
+
+console.log('filename :', filename);
 
 
 // to get a list of all the modes and scales that scribbletune can generate, you can console log scribble.scales
