@@ -1,3 +1,20 @@
+/*
+ * usage :
+ *
+ * $ node x [--filename lofi.mid] [--pattern x---] [--repeat 8] [--help]
+ *
+ * $ node x --filename lofi_beats.mid
+ *
+ * $ node x --pattern x--- 4
+ * will result : pattern = 'x---'.repeat(4)
+ * x---x---x---x---
+ *
+ * $ node x --pattern x--- 8
+ * will result : pattern = '--x-'.repeat(8)
+ * --x---x---x---x---x---x---x---x-
+ *
+ */
+
 const scribble = require('scribbletune')
 const { spawnSync } = require('child_process')
 const commandLineArgs = require('command-line-args')
@@ -17,11 +34,37 @@ const optionDefinitions = [
     type : String,
     multiple : true,
     defaultOption : false
+  },
+  {
+    name : 'repeat',
+    alias : 'r',
+    type : Number,
+    multiple : false
+  },
+  {
+    name : 'help',
+    alias : 'h',
+    type : Boolean
   }
 ]
 // next, parse the options using commandLineArgs()
 const options = commandLineArgs(optionDefinitions)
+
+// XXX test print
 console.log('options :', options);
+
+if (options.help) {
+  console.log('Node-Midi-Music-Generator-Player Manual\n\tUsage :\n\t\t$ node x [--filename lofi.mid] [--pattern x---] [--repeat 8] [--help]\n\t\t$ node x [--filename <String>] [--pattern <String>] [--repeat <Integer>] [--help]\n\n\t\t$ node x --filename lofi_beats.mid\n\n\t\t$ node x --pattern x--- 4\n\t\t$ node x --pattern x--- --repeat 4\n\t\t\t// result : pattern = \'x---\'.repeat(4), x---x---x---x---\n\n\t\t$ node x --pattern --x- 8\n\t\t$ node x --pattern --x- --repeat 8\n\t\t\t// result : pattern = \'--x-\'.repeat(8), --x---x---x---x---x---x---x---x-')
+  // return, do nothing
+  process.exit(0)
+}
+
+
+
+// options.help ? () => {
+//   console.log('usage...')
+//   return
+// } : {}
 
 // command line arguments for nodejs are stored in process.argv
 // console.log(process.argv);
@@ -36,12 +79,14 @@ process.argv.forEach(function(val, index, array) {
 simple music playing/making script
 use scribbletune and wildmidi to create then play midi files
 
-first, declare a filename
+first, declare a filename...
 */
-
 let filename = ''
+
+// is there a filename provided in the command line options? if yes, assign filename to it, otherwise assign the default filename : 'generic-music.mid'
 options.filename ? filename = options.filename : filename = 'generic-music.mid'
 
+// does the file have the '.mid' entension? if no append it
 filename.includes('.mid') ? {/* pass */} : filename = filename + '.mid'
 
 console.log('filename :', filename);
